@@ -27,12 +27,26 @@ void setup() {
   servo8.attach(8);
 
   stand();
-  delay(250);
+  delay(1000);
 }
 
 void loop() {
+for (int i = 0; i<5; i++){
+  trueWalk();
+}
 
+
+sit();
+delay(1000);
+exit(0);
+}
+void sit(){
+     servo7.write(130);
+  servo5.write(50);
+  servo6.write(110);
+  servo4.write(70);
   
+
 }
 
 void flat() {
