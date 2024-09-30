@@ -10,6 +10,7 @@ Adafruit_DCMotor *rearLeft = AFMS.getMotor(3);
 Adafruit_DCMotor *rearRight = AFMS.getMotor(4);
 
 
+
 void setup() {
   // put your setup code here, to run once:
   AFMS.begin();
@@ -18,6 +19,7 @@ void setup() {
 void loop() {
   forward();
 }
+
 
 //my first method
 void forward(){
@@ -41,10 +43,27 @@ void backward(){
   rearRight->setSpeed(200);
   rearRight->run(BACKWARD);
 }
-// you need to create 3 more methods
-//backward
-//turnLeft
-//turnRight
 
+void turnRight(){
+  motorLeft->setSpeed(200);
+  motorLeft->run(FORWARD);
+  motorRight->setSpeed(100);
+  motorRight->run(FORWARD);
+  rearLeft->setSpeed(200);
+  rearLeft->run(FORWARD);
+  rearRight->setSpeed(100);
+  rearRight->run(FORWARD);
+}
+
+void turnLeft(){
+  motorLeft->setSpeed(100);
+  motorLeft->run(FORWARD);
+  motorRight->setSpeed(200);
+  motorRight->run(FORWARD);
+  rearLeft->setSpeed(100);
+  rearLeft->run(FORWARD);
+  rearRight->setSpeed(200);
+  rearRight->run(FORWARD);
+}
 
 
