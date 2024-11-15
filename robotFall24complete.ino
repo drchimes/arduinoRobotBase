@@ -13,10 +13,10 @@ Adafruit_DCMotor *rearRight = AFMS.getMotor(4);
 const int trigPin = 8;
 const int echoPin = 7;
 int pos;
-float rightDiestance;
+float rightDistance;
 float leftDistance;
 float centerDistance;
-
+long time;
 float duration, distance;
 Servo myservo;
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -26,15 +26,40 @@ void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   Serial.begin(9600);
-  myservo.attach(9); 
+  myservo.attach(9);
 }
 
 void loop() {
-  
+sonar();
+  if (distance > 0) {
+    stop();
+    servoMove();
+    if (leftDistance >= centerDistance && leftDistance >= rightDistance) {
+      turnLeft();
+      delay(500);
+    } else if (rightDistance > centerDistance && rightDistance > leftDistance) {
+      turnRight();
+      delay(500);
+    } else {
+      forward();
+      delay(1000);
+    }
+  }
 
+  else {
+    backward();
+    delay(500);
+    time = millis();
+    if (time % 2 == 0) {
+      turnLeft();
+    } else {
+      turnRight();
+    }
+  }
 }
 
-float sonar(){
+
+float sonar() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -42,15 +67,15 @@ float sonar(){
   digitalWrite(trigPin, LOW);
 
   duration = pulseIn(echoPin, HIGH);
-  distance = (duration*.0343)/2;
+  distance = (duration * .0343) / 2;
   Serial.print("Distance: ");
   Serial.println(distance);
   delay(100);
-  return(distance);
+  return (distance);
 }
 
 //my first method
-void forward(){
+void forward() {
   motorLeft->setSpeed(200);
   motorLeft->run(FORWARD);
   motorRight->setSpeed(200);
@@ -61,7 +86,7 @@ void forward(){
   rearRight->run(FORWARD);
 }
 
-void backward(){
+void backward() {
   motorLeft->setSpeed(200);
   motorLeft->run(BACKWARD);
   motorRight->setSpeed(200);
@@ -72,7 +97,7 @@ void backward(){
   rearRight->run(BACKWARD);
 }
 
-void turnRight(){
+void turnRight() {
   motorLeft->setSpeed(200);
   motorLeft->run(FORWARD);
   motorRight->setSpeed(100);
@@ -83,7 +108,7 @@ void turnRight(){
   rearRight->run(FORWARD);
 }
 
-void turnLeft(){
+void turnLeft() {
   motorLeft->setSpeed(100);
   motorLeft->run(FORWARD);
   motorRight->setSpeed(200);
@@ -94,7 +119,7 @@ void turnLeft(){
   rearRight->run(FORWARD);
 }
 
-void forwardSpeed(int speed){
+void forwardSpeed(int speed) {
   motorLeft->setSpeed(speed);
   motorLeft->run(FORWARD);
   motorRight->setSpeed(speed);
@@ -104,30 +129,36 @@ void forwardSpeed(int speed){
   rearRight->setSpeed(speed);
   rearRight->run(FORWARD);
 }
+void stop() {
+  motorLeft->setSpeed(0);
+  motorRight->setSpeed(0);
+  rearLeft->setSpeed(0);
+  rearRight->setSpeed(0);
+}
 
-void servoMove(){
-  for(pos = 0; pos<=90; pos++){
+void servoMove() {
+  for (pos = 0; pos <= 90; pos++) {
     myservo.write(pos);
     delay(15);
   }
   sonar();
   centerDistance = distance;
-  for(pos = 90; pos<=180; pos++){
+  for (pos = 90; pos <= 180; pos++) {
     myservo.write(pos);
     delay(15);
   }
   sonar();
   rightDistance = distance;
-  for(pos = 180; pos>=90; pos--){
+  for (pos = 180; pos >= 90; pos--) {
     myservo.write(pos);
     delay(15);
   }
   sonar();
   centerDistance = distance;
-  for(pos = 90; pos>=0; pos--){
+  for (pos = 90; pos >= 0; pos--) {
     myservo.write(pos);
     delay(15);
   }
   sonar();
-  lefDistance = distance;
+  leftDistance = distance;
 }
